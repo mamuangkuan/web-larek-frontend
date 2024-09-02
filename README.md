@@ -266,34 +266,173 @@ yarn build
 Презентер связывает View и Model, обрабатывает события от View и обновляет данные в Model. Он обеспечивает логику работы приложения и взаимодействие между слоями.
 
 
-## Интерфейсы
+# Интерфейсы
 
-- **IProduct**: Интерфейс для описания товара.
+## IProduct
 
-- **ICard**: Интерфейс для описания карточки товара.
+Интерфейс товара.
 
-- **IAppData**: Интерфейс для описания состояния приложения с методами управления корзиной, заказом и превью.
+```typescript
+interface IProduct {
+    title: string;
+    id: string;
+    category: string;
+    description?: string;
+    image: string;
+    price: number | null;
+    buttonName?: string;
+}
+```
 
-- **IForm**: Интерфейс формы с методами управления формой.
+## ICard
 
-- **IOrderForm**: Интерфейс формы заказа с методами и свойствами для формы заказа.
+Интерфейс карточки товара.
 
-- **IContactForm**: Интерфейс контактной информации.
+```typescript
+interface ICard {
+    price: number | null;
+    category: string;
+    image: string;
+    title: string;
+    description: string;
+    buttonName: string;
+}
+```
 
-- **IOrder**: Интерфейс заказа, объединяющий свойства заказа и контактной информации.
+## IAppData
 
-- **FormErrors**: интерфейс для валидации формы.
+Интерфейс данных приложения.
 
-- **ICart**: Интерфейс корзины с методами управления корзиной.
+```typescript
+interface IAppData {
+    products: IProduct[];
+    cart: IProduct[];
+}
+```
 
-- **ISuccessForm**: Интерфейс успешного заказа.
+## IForm
 
-- **IOperation**: Интерфейс операции с методами для действий над карточкой.
+Интерфейс окна формы.
 
-- **ISuccessResult**: Интерфейс успешной операции оформления заказа.
+```typescript
+interface IForm {
+    errors: string[];
+    valid: boolean;
+}
+```
 
-- **IPage**: Интерфейс для управления главной страницей.
+## IOrderForm
 
-- **IOrderResult**: Интерфейс для ответа сервера на создание заказа.
+Интерфейс модального окна заказа.
 
-- **IModal**: Интерфейс модального окна с методами для управления модальными окнами.
+```typescript
+interface IOrderForm {
+    payment: string;
+    address: string;
+}
+```
+
+## IContactForm
+
+Интерфейс заполнения контактной информации.
+
+```typescript
+interface IContactForm {
+    email: string;
+    phone: string;
+}
+```
+
+## IOrder
+
+Интерфейс заказа.
+
+```typescript
+interface IOrder {
+    items: string[];
+    total: number;
+}
+```
+
+## FormErrors
+
+Интерфейс валидации формы.
+
+```typescript
+type FormErrors = Partial<Record<keyof IOrder, string>>;
+```
+
+## ICart
+
+Интерфейс корзины.
+
+```typescript
+interface ICart {
+    products: HTMLElement[];
+    cost: number;
+}
+```
+
+## ISuccessMessage
+
+Интерфейс успешного оформления заказа.
+
+```typescript
+interface ISuccessMessage {
+    id: string;
+    count: number | string;
+}
+```
+
+## IOperation
+
+Интерфейс действий над карточкой.
+
+```typescript
+interface IOperation {
+    Click: (event: MouseEvent) => void;
+}
+```
+
+## ISuccessResult
+
+Интерфейс действий окна успешного оформления заказа.
+
+```typescript
+interface ISuccessResult {
+    Click: () => void;
+}
+```
+
+## IPage
+
+Интерфейс главной страницы.
+
+```typescript
+interface IPage {
+    catalog: HTMLElement[];
+    counter: number;
+    locked: boolean;
+}
+```
+
+## IOrderResult
+
+Интерфейс данных ответа сервера на создание заказа.
+
+```typescript
+interface IOrderResult {
+    id: string;
+    total: number;
+}
+```
+
+## IModal
+
+Интерфейс модального окна.
+
+```typescript
+interface IModal {
+    content: HTMLElement;
+}
+```
