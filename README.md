@@ -307,6 +307,9 @@ interface ICard {
 interface IAppData {
     products: IProduct[];
     cart: IProduct[];
+    preview: string;
+	  order: IOrder;
+	  total: string | number;
 }
 ```
 
