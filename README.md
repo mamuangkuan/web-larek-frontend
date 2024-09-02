@@ -266,9 +266,9 @@ yarn build
 Презентер связывает View и Model, обрабатывает события от View и обновляет данные в Model. Он обеспечивает логику работы приложения и взаимодействие между слоями.
 
 
-# Интерфейсы
+### Интерфейсы
 
-## IProduct
+#### IProduct
 
 Интерфейс товара.
 
@@ -284,7 +284,7 @@ interface IProduct {
 }
 ```
 
-## ICard
+#### ICard
 
 Интерфейс карточки товара.
 
@@ -299,7 +299,7 @@ interface ICard {
 }
 ```
 
-## IAppData
+#### IAppData
 
 Интерфейс данных приложения.
 
@@ -310,7 +310,7 @@ interface IAppData {
 }
 ```
 
-## IForm
+#### IForm
 
 Интерфейс окна формы.
 
@@ -321,7 +321,7 @@ interface IForm {
 }
 ```
 
-## IOrderForm
+#### IOrderForm
 
 Интерфейс модального окна заказа.
 
@@ -332,7 +332,7 @@ interface IOrderForm {
 }
 ```
 
-## IContactForm
+#### IContactForm
 
 Интерфейс заполнения контактной информации.
 
@@ -343,7 +343,7 @@ interface IContactForm {
 }
 ```
 
-## IOrder
+#### IOrder
 
 Интерфейс заказа.
 
@@ -354,7 +354,7 @@ interface IOrder {
 }
 ```
 
-## FormErrors
+#### FormErrors
 
 Интерфейс валидации формы.
 
@@ -362,7 +362,7 @@ interface IOrder {
 type FormErrors = Partial<Record<keyof IOrder, string>>;
 ```
 
-## ICart
+#### ICart
 
 Интерфейс корзины.
 
@@ -373,7 +373,7 @@ interface ICart {
 }
 ```
 
-## ISuccessMessage
+#### ISuccessMessage
 
 Интерфейс успешного оформления заказа.
 
@@ -384,7 +384,7 @@ interface ISuccessMessage {
 }
 ```
 
-## IOperation
+#### IOperation
 
 Интерфейс действий над карточкой.
 
@@ -394,7 +394,7 @@ interface IOperation {
 }
 ```
 
-## ISuccessResult
+#### ISuccessResult
 
 Интерфейс действий окна успешного оформления заказа.
 
@@ -404,7 +404,7 @@ interface ISuccessResult {
 }
 ```
 
-## IPage
+#### IPage
 
 Интерфейс главной страницы.
 
@@ -416,7 +416,7 @@ interface IPage {
 }
 ```
 
-## IOrderResult
+#### IOrderResult
 
 Интерфейс данных ответа сервера на создание заказа.
 
@@ -427,7 +427,7 @@ interface IOrderResult {
 }
 ```
 
-## IModal
+#### IModal
 
 Интерфейс модального окна.
 
