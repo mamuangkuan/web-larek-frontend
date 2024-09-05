@@ -111,32 +111,27 @@ yarn build
   - принимает объект событий и передает его в базовый класс вместе с пустым объектом состояния
 
 - **Свойства**:
-  - **products**: массив товаров
-  - **cart**: массив товаров в корзине
-  - **formValidationErrors**: ошибки валидации форм
-  - **previewProductId**: ID карточки для превью
-  - **orderDetails**: данные заказа
+  - **productsList**: массив товаров
+  - **basket**: массив товаров в корзине
+  - **formErrors**: ошибки валидации форм
+  - **productPreview**: ID карточки для превью
+  - **order**: данные заказа
 
 - **Методы**:
   - **Корзина**:
-    - **isCartEmpty**: проверяет, пуста ли корзина.
-    - **addProductToCart**: добавляет товар в корзину.
-    - **removeProductFromCart**: удаляет товар из корзины.
-    - **clearCart**: очищает корзину.
-    - **getCartItems**: возвращает товары в корзине.
-    - **findProductIndexInCart**: возвращает индекс товара в корзине.
+    - **isBasketEmpty**: проверяет, пуста ли корзина.
+    - **addProductToBasket**: добавляет товар в корзину.
+    - **removeProductFromBasket**: удаляет товар из корзины.
+    - **clearBasket**: очищает корзину.
+    - **getBasketProducts**: возвращает товары в корзине.
+    - **getBasketProductIndex**: возвращает индекс товара в корзине.
     - **calculateTotalPrice**: вычисляет общую стоимость товаров в корзине.
-  
-  - **Продукты**:
-    - **addProducts**: добавляет товары в список.
-    - **setPreviewProduct**: устанавливает ID выбранной карточки для превью.
-
-  - **Заказ**:
-    - **createOrder**: создает объект заказа.
+    - **setProductPreview**: устанавливает ID выбранной карточки для превью.
+    - **getOrder**: создает объект заказа.
     - **setPaymentMethod**: устанавливает способ оплаты.
     - **setDeliveryAddress**: устанавливает адрес доставки.
-    - **updateOrderField**: устанавливает значение для полей заказа address, phone и email.
-    - **validateOrderForm**: проверяет заполнение полей заказа.
+    - **setOrderField**: устанавливает значение для полей заказа address, phone и email.
+    - **validateOrder**: проверяет заполнение полей заказа.
 
 #### WebLarekApi
 Класс для взаимодействия с сервером. Наследуется от `Api`.
@@ -144,8 +139,8 @@ yarn build
   - нет
 
 - **Методы**:
-  - **fetchProductList**: получает список товаров.
-  - **submitOrder**: отправляет заказ на сервер.
+  - **getProductsList**: получает список товаров с сервера.
+  - **makeOrder**: отправляет заказ на сервер.
 
 ### Слой представления (View)
 
@@ -155,74 +150,74 @@ yarn build
   - принимает контейнер для карточек товаров и объект событий
 
 - **Свойства**:
-  - **modalContainer**: контейнер для модального окна
-  - **cartElement**: элемент корзины
-  - **cartCounter**: элемент счетчика корзины
-  - **productContainer**: контейнер для товаров
+  - **_wrapperContainer**: контейнер для модального окна
+  - **_basketElement**: элемент корзины
+  - **_basketCounter**: элемент счетчика корзины
+  - **_productsContainer**: контейнер для товаров
 
 - **Методы**:
-  - **setProductElements**: добавляет товары на страницу.
-  - **updateCartCounter**: устанавливает количество товаров в корзине.
-  - **toggleScrollLock**: блокирует прокрутку.
+  - **set productsContainer**: добавляет товары на страницу.
+  - **set basketCounter**: устанавливает количество товаров в корзине.
+  - **set scrollLock**: блокирует прокрутку.
 
 #### Card
 Класс для отображения данных в карточке товара. Наследуется от `Component`.
 - **Конструктор**:
-  - принимает контейнер для карточки товара и действие над карточкой
+  - принимает HTML-элемент контейнера и необязательный объект с операцией, привязывая метод Click к кнопке действия или контейнеру, если он передан.
 
 - **Свойства**:
-  - **categoryElement**: категория товара
-  - **titleElement**: название товара
-  - **descriptionElement**: описание товара 
-  - **imageElement**: изображение товара
-  - **priceElement**: цена товара 
-  - **actionButton**: кнопка 
+  - **_category**: категория товара
+  - **_title**: название товара
+  - **_description**: описание товара 
+  - **_image**: изображение товара
+  - **_price**: цена товара 
+  - **_actionButton**: кнопка 
 
 - **Методы**:
-  - **setTitle**: устанавливает название.
-  - **setDescription**: устанавливает описание.
-  - **setCategory**: устанавливает категорию.
-  - **setPrice**: устанавливает цену.
-  - **setImage**: устанавливает изображение.
-  - **setActionButtonText**: устанавливает текст на кнопке.
+  - **set title**: устанавливает название.
+  - **set description**: устанавливает описание.
+  - **set category**: устанавливает категорию.
+  - **set price**: устанавливает цену.
+  - **set image**: устанавливает изображение.
+  - **set actionButtonText**: устанавливает текст на кнопке.
 
-#### Cart
+#### Basket
 Класс для отображения корзины. Наследуется от `Component`.
 - **Конструктор**:
   - принимает контейнер для данных корзины и объект событий
 
 - **Свойства**:
-  - **cartItemList**: список товаров в корзине
-  - **totalPriceElement**: элемент с общей стоимостью 
-  - **cartButton**: кнопка корзины
+  - **basketProductsList**: список товаров в корзине
+  - **totalPrice**: элемент с общей стоимостью 
+  - **basketButton**: кнопка корзины
 
 - **Методы**:
-  - **setCartItems**: устанавливает список товаров.
-  - **setTotalPrice**: устанавливает общую стоимость.
+  - **set products**: устанавливает список товаров.
+  - **set price**: устанавливает общую стоимость товаров.
 
 #### Form
 Класс для работы с формами. Наследуется от `Component`.
 - **Свойства**:
   - **submitButton**: кнопка отправки формы
-  - **errorContainer**: элемент для отображения ошибок
+  - **formErrors**: элемент для отображения ошибок
 
 - **Методы**:
-  - **setFormValidity**: устанавливает валидность формы.
-  - **setFormErrors**: устанавливает ошибки формы.
-  - **renderForm**: отрисовывает форму.
-  - **handleInputChange**: проверяет поле.
+  - **set validity**: устанавливает валидность формы.
+  - **set errors**: устанавливает ошибки формы.
+  - **render**: отрисовывает форму.
+  - **inputChange**: проверяет поле.
 
 #### OrderForm
 Класс для формы заказа. Наследуется от `Form`.
 - **Свойства**:
   - **onlinePaymentButton**: кнопка выбора онлайн оплаты
   - **cashPaymentButton**: кнопка выбора оплаты при получении
-  - **selectedPaymentMethod**: способ оплаты
+  - **payment**: способ оплаты
 
 - **Методы**:
-  - **setDeliveryAddress**: устанавливает адрес доставки.
-  - **addPaymentOption**: добавляет способ оплаты.
-  - **removePaymentOption**: удаляет способ оплаты.
+  - **set address**: устанавливает адрес доставки.
+  - **addPaymentMethod**: добавляет способ оплаты.
+  - **removePaymentMethod**: удаляет способ оплаты.
 
 #### ContactForm
 Класс для формы контактных данных. Наследуется от `Form`.
@@ -230,20 +225,20 @@ yarn build
   - принимает контейнер для данных контактов и объект событий
 
 - **Методы**:
-  - **setEmail**: устанавливает email.
-  - **setPhoneNumber**: устанавливает телефон.
+  - **set email**: устанавливает email.
+  - **set phone**: устанавливает телефон.
 
-#### SuccessMessage
+#### SuccessForm
 Класс для отображения сообщения об успешном заказе. Наследуется от `Component`.
 - **Конструктор**:
   - принимает контейнер данных об успешном заказе и объект событий
 
 - **Свойства**:
   - **closeButton**: кнопка закрытия
-  - **totalSpentElement**: общее количество потраченных средств
+  - **totalSpent**: общее количество потраченных средств
 
 - **Методы**:
-  - **setTotalSpent**: устанавливает количество потраченных средств.
+  - **set TotalSpentCounter**: устанавливает количество потраченных средств.
 
 #### Modal
 Класс для работы с модальными окнами. Наследуется от `Component`.
@@ -251,14 +246,14 @@ yarn build
   - принимает контейнер для данных модального окна и объект событий
 
 - **Свойства**:
-  - **openButton**: кнопка модального окна
-  - **contentElement**: содержимое модального окна
+  - **button**: кнопка модального окна
+  - **content**: содержимое модального окна
 
 - **Методы**:
-  - **setContent**: устанавливает содержимое.
-  - **renderModal**: отрисовывает модальное окно.
-  - **openModal**: открывает модальное окно.
-  - **closeModal**: закрывает модальное окно.
+  - **set content**: устанавливает содержимое.
+  - **render**: отрисовывает модальное окно.
+  - **open**: открывает модальное окно.
+  - **close**: закрывает модальное окно.
 
 ### Презентер (Presenter)
 
@@ -273,14 +268,13 @@ yarn build
 Интерфейс товара.
 
 ```typescript
-interface IProduct {
-    title: string;
-    id: string;
-    category: string;
-    description?: string;
-    image: string;
-    price: number | null;
-    buttonName?: string;
+export interface IProduct extends ICard {
+	title: string;
+	id: string;
+	category: string;
+	description: string;
+	image: string;
+	price: number | null;	
 }
 ```
 
@@ -289,13 +283,8 @@ interface IProduct {
 Интерфейс карточки товара.
 
 ```typescript
-interface ICard {
-    price: number | null;
-    category: string;
-    image: string;
-    title: string;
-    description: string;
-    buttonName: string;
+export interface ICard {
+	actionButtonText: string;	
 }
 ```
 
@@ -306,10 +295,7 @@ interface ICard {
 ```typescript
 interface IAppData {
     products: IProduct[];
-    cart: IProduct[];
-    preview: string;
-	  order: IOrder;
-	  total: string | number;
+    basket: IProduct[];
 }
 ```
 
@@ -352,8 +338,10 @@ interface IContactForm {
 
 ```typescript
 interface IOrder {
-    items: string[];
-    total: number;
+		payment: string,
+		address: string,
+		phone: string,
+		email: string,
 }
 ```
 
@@ -365,24 +353,23 @@ interface IOrder {
 type FormErrors = Partial<Record<keyof IOrder, string>>;
 ```
 
-#### ICart
+#### IBasket
 
 Интерфейс корзины.
 
 ```typescript
-interface ICart {
+interface IBasket {
     products: HTMLElement[];
-    cost: number;
+    price: number;
 }
 ```
 
-#### ISuccessMessage
+#### ISuccessForm
 
 Интерфейс успешного оформления заказа.
 
 ```typescript
-interface ISuccessMessage {
-    id: string;
+interface ISuccessForm {
     count: number | string;
 }
 ```
@@ -413,9 +400,9 @@ interface ISuccessResult {
 
 ```typescript
 interface IPage {
-    catalog: HTMLElement[];
-    counter: number;
-    locked: boolean;
+	  productsContainer: HTMLElement[];
+	  basketCounter: number;
+	  scrollLock: boolean;
 }
 ```
 
