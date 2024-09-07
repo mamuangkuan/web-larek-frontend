@@ -1,14 +1,14 @@
 import { Component } from './base/Component';
 import { ensureElement } from '../utils/utils';
-import { ICard, IOperation, IProduct } from '../types';
+import { IOperation, IProduct } from '../types';
 
-const CategoryColorsList: Map<string, string> = new Map([
-	['хард-скил', 'card__category_hard'],
-	['софт-скил', 'card__category_soft'],
-	['дополнительное', 'card__category_additional'],
-	['другое', 'card__category_other'],
-	['кнопка', 'card__category_button'],
-]);
+const categoryColorsList: { [key: string]: string } = {
+	'софт-скил': 'card__category_soft',
+	'хард-скил': 'card__category_hard',
+	'кнопка': 'card__category_button',
+	'дополнительное': 'card__category_additional',
+	'другое': 'card__category_other',
+};
 
 export class Card extends Component<IProduct> {
 	protected _category: HTMLElement | null;
@@ -45,9 +45,9 @@ export class Card extends Component<IProduct> {
 		}
 	}
 
-	set category(text: string) {
-		this.setText(this._category, text);
-		this.toggleClass(this._category, CategoryColorsList.get(text), true);
+	set category(value: string) {
+		this.setText(this._category, value);
+		this._category.className = `card__category ${categoryColorsList[value]}`;
 	}
 
 	set image(link: string) {

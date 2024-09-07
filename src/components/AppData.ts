@@ -1,4 +1,11 @@
-import { IAppData, IProduct, IOrder, FormErrors } from '../types';
+import {
+	IAppData,
+	IProduct,
+	IOrder,
+	FormErrors,
+	IContactForm,
+	IOrderForm,
+} from '../types';
 import { IEvents } from './base/events';
 import { Model } from './base/Model';
 
@@ -89,34 +96,57 @@ export class AppData extends Model<IAppData> {
 		this.emitChanges('preview:changed', product);
 	}
 
-	setOrderField(
-		field: keyof Pick<IOrder, 'address' | 'phone' | 'email'>,
-		value: string
+	setOrderDeliveryFields(
+		field: keyof IOrderForm,
+		value: IOrderForm[keyof IOrderForm]
 	) {
 		this.order[field] = value;
-		this.validateOrder();
+		this.validateDeliveryFields();
 	}
 
-	validateOrder() {
-		const errors: typeof this.formErrors = {};
-		if (!this.order.email) {
-			errors.email = 'Укажите адрес электронной почты';
-		}
+	setOrderContactsFields(
+		field: keyof IContactForm,
+		value: IContactForm[keyof IContactForm]
+	) {
+		this.order[field] = value;
+		this.validateContactsFields();
+	}
 
-		if (!this.order.phone) {
-			errors.phone = 'Укажите номер телефона';
+	validateDeliveryFields() {
+		const errors: typeof this.formErrors = {};
+		if (!this.order.payment) {
+			errors.payment = 'Выберите способ оплаты';
 		}
 
 		if (!this.order.address) {
 			errors.address = 'Укажите адрес доставки';
 		}
 
-		if (!this.order.payment) {
-			errors.payment = 'Выберите способ оплаты';
+		this.formErrors = errors;
+		this.events.emit('DeliveryFields:change', this.formErrors);
+		return Object.keys(errors).length === 0;
+	}
+
+	validateContactsFields() {
+		const errors: typeof this.formErrors = {};
+
+		if (!this.order.email) {
+			errors.email = 'Укажите адрес электронной почты';
+		}
+		if (!this.order.phone) {
+			errors.phone = 'Укажите номер телефона';
 		}
 
 		this.formErrors = errors;
-		this.events.emit('formErrors:change', this.formErrors);
+		this.events.emit('ContactsFields:change', this.formErrors);
 		return Object.keys(errors).length === 0;
+	}
+
+	clearOrderData() {
+		this.order.email = '';
+		this.order.phone = '';
+		this.order.address = '';
+		this.order.payment = '';
+		this.formErrors = {};
 	}
 }

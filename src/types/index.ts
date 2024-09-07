@@ -10,13 +10,13 @@ export interface IProduct extends ICard {
 
 //Карточка товара
 export interface ICard {
-	actionButtonText: string;	
+	actionButtonText: string;
 }
 
 //Интерфейс данных приложения
 export interface IAppData {
 	cardList: IProduct[];
-	basket: IProduct[];
+	basket: IProduct[];	
 }
 
 //интерфейс окна формы
@@ -87,3 +87,8 @@ export interface IModal {
 }
 
 export type ModalRender = Pick<IModal, 'content'>;
+
+export interface ContactErrors {
+	email: string;
+	phone: string;
+}

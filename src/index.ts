@@ -1,7 +1,7 @@
 import './scss/styles.scss';
 import { cloneTemplate, ensureElement } from './utils/utils';
 import { API_URL, CDN_URL } from './utils/constants';
-import { IOrder, IProduct } from './types';
+import { IOrder, IProduct, IContactForm, IOrderForm } from './types';
 import { EventEmitter } from './components/base/events';
 import { WebLarekApi } from './components/WebLarekApi';
 import { AppData } from './components/AppData';
@@ -29,7 +29,10 @@ const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 const appData = new AppData(events);
 
 const page = new Page(document.body, events);
-const modalWindow = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
+const modalWindow = new Modal(
+	ensureElement<HTMLElement>('#modal-container'),
+	events
+);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const deliveryForm = new OrderForm(cloneTemplate(orderTemplate), events);
 const contactsForm = new ContactForm(cloneTemplate(contactsTemplate), events);
@@ -72,14 +75,14 @@ events.on('card:select', (product: IProduct) => {
 // Открываем превью карточки товара
 events.on('preview:changed', (product: IProduct) => {
 	const card = new Card(cloneTemplate(cardPreviewTemplate), {
-    Click: () => {
-      if (appData.basket.indexOf(product) < 0) {
-          events.emit('product:add', product);
-      } else {
-          events.emit('product:remove-from-modal', product);
-      }
-  },
-});
+		Click: () => {
+			if (appData.basket.indexOf(product) < 0) {
+				events.emit('product:add', product);
+			} else {
+				events.emit('product:remove-from-modal', product);
+			}
+		},
+	});
 	modalWindow.render({
 		content: card.render({
 			title: product.title,
@@ -88,9 +91,10 @@ events.on('preview:changed', (product: IProduct) => {
 			image: product.image,
 			price: product.price,
 			id: product.id,
-      actionButtonText: appData.basket.indexOf(product) < 0 ? 
-      'Добавить в корзину' : 
-      'Удалить из корзины',
+			actionButtonText:
+				appData.basket.indexOf(product) < 0
+					? 'Добавить в корзину'
+					: 'Удалить из корзины',
 		}),
 	});
 });
@@ -102,25 +106,25 @@ events.on('modal:open', () => {
 
 //Снимаем блокировку прокрутки при закрытии окна
 events.on('modal:close', () => {
-  page.scrollLock = false;  // Разблокируем прокрутку страницы
+	page.scrollLock = false; // Разблокируем прокрутку страницы
 });
 
 //Добавляем товар в корзину
 events.on('product:add', (product: IProduct) => {
-  appData.addProductToBasket(product);
-  modalWindow.close();
+	appData.addProductToBasket(product);
+	modalWindow.close();
 });
 
 // Удаляем товар из корзины через модальное окно
 events.on('product:remove-from-modal', (product: IProduct) => {
-  appData.removeProductFromBasket(product);
-  // Обновляем содержимое модального окна, чтобы отобразить изменения
-  events.emit('preview:changed', product);
+	appData.removeProductFromBasket(product);
+	// Обновляем содержимое модального окна, чтобы отобразить изменения
+	events.emit('preview:changed', product);
 });
 
 //Удаляем товар из корзины через корзину
 events.on('product:delete', (product: IProduct) => {
-	appData.removeProductFromBasket(product);  
+	appData.removeProductFromBasket(product);
 });
 
 // Открываем корзину
@@ -152,6 +156,8 @@ events.on('basket:changed', () => {
 
 // Создаем модальное окно для заказа
 events.on('order:open', () => {
+	appData.clearOrderData();
+	deliveryForm.removePaymentMethod();
 	modalWindow.render({
 		content: deliveryForm.render({
 			address: '',
@@ -162,7 +168,17 @@ events.on('order:open', () => {
 	});
 });
 
-// Создаем модальное окно для заполнения адреса доставки и телефона
+// Выбираем способ оплаты
+events.on(
+	'payment:change',
+	(data: { payment: string; button: HTMLElement }) => {
+		appData.setPaymentMethod(data.payment);
+		deliveryForm.addPaymentMethod(data.button);
+		appData.validateDeliveryFields();
+	}
+);
+
+// Создаем модальное окно для заполнения емейла и телефона
 events.on('order:submit', () => {
 	appData.getOrder().total = appData.calculateTotalPrice();
 	modalWindow.render({
@@ -175,51 +191,45 @@ events.on('order:submit', () => {
 	});
 });
 
-
-// Запускаем валидацию полей формы заказа
-events.on('formErrors:change', (errors: Partial<IOrder>) => {
-	const { email, phone, address, payment } = errors;
-	deliveryForm.validity = !address && !payment;
-	contactsForm.validity = !email && !phone;
-	deliveryForm.errors = Object.values({ address, payment })
-		.filter((i) => !!i)
-		.join('; ');
-	contactsForm.errors = Object.values({ phone, email })
-		.filter((i) => !!i)
-		.join('; ');
-});
-
-// Выбираем способо оплаты
-events.on(
-	'payment:change',
-	(data: { payment: string; button: HTMLElement }) => {
-		appData.setPaymentMethod(data.payment);
-		deliveryForm.addPaymentMethod(data.button);
-		appData.validateOrder();
-	}
-);
-
 // Изменяем нужные поля для доставки товаров
 events.on(
 	'order:change',
-	(data: {
-		field: keyof Pick<IOrder, 'address' | 'phone' | 'email'>;
-		value: string;
+	(data: { 
+		field: keyof IOrderForm; 
+		value: IOrderForm[keyof IOrderForm] 
 	}) => {
-		appData.setOrderField(data.field, data.value);
+		appData.setOrderDeliveryFields(data.field, data.value);
 	}
 );
+
+// Запускаем валидацию полей доставки
+events.on('DeliveryFields:change', (errors: Partial<IOrder>) => {
+	const { payment, address } = errors;
+	deliveryForm.validity = !payment && !address;
+	deliveryForm.errors = Object.values({ payment, address })
+		.filter((i) => !!i)
+		.join('; ');
+});
 
 // Изменяем нужные поля контактной информации
 events.on(
 	'contacts:change',
 	(data: {
-		field: keyof Pick<IOrder, 'address' | 'phone' | 'email'>;
-		value: string;
+		field: keyof IContactForm;
+		value: IContactForm[keyof IContactForm];
 	}) => {
-		appData.setOrderField(data.field, data.value);
+		appData.setOrderContactsFields(data.field, data.value);
 	}
 );
+
+// Запускаем валидацию полей контактов
+events.on('ContactsFields:change', (errors: Partial<IOrder>) => {
+	const { email, phone } = errors;
+	contactsForm.validity = !email && !phone;
+	contactsForm.errors = Object.values({ phone, email })
+		.filter((i) => !!i)
+		.join('; ');
+});
 
 //Отправляем заказ на сервер и выводим окно с успешным заказом
 events.on('contacts:submit', () => {

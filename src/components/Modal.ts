@@ -34,6 +34,6 @@ export class Modal extends Component<ModalRender> implements IModal {
 	close() {
 		this.container.classList.remove('modal_active');
 		this.events.emit('modal:close');
-		// this.content = null;
+		this.content = null;
 	}
 }

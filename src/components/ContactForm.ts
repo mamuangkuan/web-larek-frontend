@@ -1,6 +1,6 @@
 import { Form } from './Form';
 import { IEvents } from './base/events';
-import { IContactForm } from '../types';
+import { IContactForm, ISuccessForm } from '../types';
 
 interface ContactRender {
 	email: string;
@@ -20,5 +20,12 @@ export class ContactForm extends Form<ContactRender> implements IContactForm {
 	set phone(value: string) {
 		(this.container.elements.namedItem('phone') as HTMLInputElement).value =
 			value;
+	}
+
+	protected inputChange(
+		field: keyof IContactForm,
+		value: IContactForm[keyof IContactForm]
+	) {
+		this.events.emit(`contacts:change`, { field, value });
 	}
 }
